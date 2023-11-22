@@ -7,13 +7,14 @@ def read_course_info():
         with open("Course.txt", "r") as file:
             for line in file:
                 # 解析每一行，以逗號分隔
-                course_id, course_name, course_credit, course_remainder = map(str.strip, line.split(','))
+                course_id, course_name, course_credit, course_time, course_remainder = map(str.strip, line.split(','))
 
                 # 將課程信息組成一個字典，加入列表中
                 course = {
                     "course_id": course_id,
                     "course_name": course_name,
                     "course_credit": course_credit,
+                    "course_time": course_time,
                     "course_remainder": course_remainder
                 }
                 course_info.append(course)
@@ -55,3 +56,7 @@ def write_curriculum(student_id, course_id, course_credit, course_time):
     except FileNotFoundError:
         print("ERROR: " + student_id +"檔案不存在")
         return False
+
+def verify(student_id, course_time):
+    curriculum = get_curriculum(student_id)
+    
