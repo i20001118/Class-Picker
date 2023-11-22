@@ -1,4 +1,5 @@
 
+#讀入所有課程
 def read_course_info():
     course_info = []  # 保存課程信息的列表
 
@@ -22,5 +23,35 @@ def read_course_info():
         print("ERROR: 找不到Course.txt檔案。")
         return None
 
-# 測試讀取課程信息功能
-courses = read_course_info()
+# 讀入學生課表資料
+def get_curriculum(student_id):
+    filename = student_id + ".txt"
+    curriculum_info = []
+
+    try:
+        with open(filename, "r") as file:
+            for line in file:
+                course_id, course_credit,course_time = map(str.strip, line.split(','))
+                curriculum = {
+                    "course_id": course_id,
+                    "course_credit": course_credit,
+                    "course_time": course_time
+                }
+                curriculum_info.append(curriculum)
+        return curriculum_info
+    
+    except FileNotFoundError:
+        print("ERROR: 找不到" + student_id + "檔案")
+
+def write_curriculum(student_id, course_id, course_credit, course_time):
+    filename = student_id + ".txt"
+
+    try:
+        with open(filename, "a") as file:
+            line = [course_id, course_credit, course_time]
+            file.writelines(line)
+            file.close()
+        return True
+    except FileNotFoundError:
+        print("ERROR: " + student_id +"檔案不存在")
+        return False
