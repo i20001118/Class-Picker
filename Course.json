@@ -1,0 +1,13 @@
+{
+    "A001" : {
+        "name"          :   "軟體工程開發實務",
+        "credit"        :   3,
+        "Total peopl"   :   60,
+        "Remaining"     :   40,
+        "Time"          :   {
+            "Week"      :   "Wednesday",
+            "Class"     :   6,
+            "Duration"  :   3   
+        }
+    }
+}
