@@ -1,0 +1,37 @@
+{
+    "A001" : {
+        "Name"          :   "軟體工程開發實務",
+        "Credit"        :   3,
+        "Total peopl"   :   60,
+        "Remaining"     :   40,
+        "Time"          :   {
+            "Week"      :   3,
+            "Class"     :   6,
+            "Duration"  :   3   
+        }
+    },
+
+    "A002" : {
+        "Name"          :   "程式設計",
+        "Credit"        :   2,
+        "Total peopl"   :   50,
+        "Remaining"     :   11,
+        "Time"          :   {
+            "Week"      :   2,
+            "Class"     :   6,
+            "Duration"  :   2   
+        }
+    },
+
+    "A003" : {
+        "Name"          :   "國語",
+        "Credit"        :   2,
+        "Total peopl"   :   40,
+        "Remaining"     :   1,
+        "Time"          :   {
+            "Week"      :   1,
+            "Class"     :   5,
+            "Duration"  :   2   
+        }
+    }
+}

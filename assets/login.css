@@ -1,0 +1,26 @@
+body{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main{
+    max-width: 400px;
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-self: center;
+    align-self: center;
+    flex-direction: column;
+    border: 2px solid black;
+    outline: 2px dashed black;
+    outline-offset: 5px;
+    padding: 20px;
+}
+
+#system-title{
+    text-align: center;
+    font-weight: bolder;
+}

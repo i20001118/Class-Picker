@@ -1,62 +1,123 @@
+import pandas as pd
+import json
 
-#讀入所有課程
-def read_course_info():
-    course_info = []  # 保存課程信息的列表
-
+#讀入Json檔案
+def read_json_file(filename):
+    data = {}
     try:
-        with open("Course.txt", "r") as file:
-            for line in file:
-                # 解析每一行，以逗號分隔
-                course_id, course_name, course_credit, course_time, course_remainder = map(str.strip, line.split(','))
-
-                # 將課程信息組成一個字典，加入列表中
-                course = {
-                    "course_id": course_id,
-                    "course_name": course_name,
-                    "course_credit": course_credit,
-                    "course_time": course_time,
-                    "course_remainder": course_remainder
-                }
-                course_info.append(course)
-
-        return course_info
+        with open(filename, 'r') as f:
+            data = json.load(f)
+        return data
     except FileNotFoundError:
-        print("ERROR: 找不到 Course.txt 檔案。")
+        print("ERROR: 找不到 " + filename + " 檔案。")
         return None
 
-# 讀入學生課表資料
-def get_curriculum(student_id):
-    filename = student_id + ".txt"
-    curriculum_info = []
-
+def write_json_file(filename, new_data):
     try:
-        with open(filename, "r") as file:
-            for line in file:
-                course_id, course_credit,course_time = map(str.strip, line.split(','))
-                curriculum = {
-                    "course_id": course_id,
-                    "course_credit": course_credit,
-                    "course_time": course_time
-                }
-                curriculum_info.append(curriculum)
-        return curriculum_info
-    
-    except FileNotFoundError:
-        print("ERROR: 找不到" + student_id + "檔案")
-
-def write_curriculum(student_id, course_id, course_credit, course_time):
-    filename = student_id + ".txt"
-
-    try:
-        with open(filename, "a") as file:
-            line = [course_id, course_credit, course_time]
-            file.writelines(line)
-            file.close()
+        with open(filename, 'w') as f:
+            json.dump(new_data, f, indent = 2)
         return True
+    except FileNotFoundError:
+        print("ERROR: 找不到 " + filename + " 檔案。")
+        return FileNotFoundError
+    except FileExistsError:
+        print("ERROR: " + filename + " 檔案存在錯誤。")
+        return FileExistsError
+
+def search_course(course_id):
+    course_info = read_json_file("Course.json")
+    if course_id in course_info:
+        return course_info[course_id]
+    else:
+        return None
+
+def write_curriculum(student_id, course_id):
+    filename = student_id + ".json"
+
+    try:
+        if (verify(student_id, course_id)):
+            with open(filename, 'r') as f:
+                data = json.load(f)
+
+            new_key = len(data) + 1
+            if new_key < 10:
+                new_key = "0" + str(new_key)
+            else:
+                new_key = str(new_key)
+
+            data[new_key] = {
+                "Course_ID" : course_id
+            }
+            write_json_file(filename, data)
+            return True
     except FileNotFoundError:
         print("ERROR: " + student_id +"檔案不存在")
         return False
 
-def verify(student_id, course_time):
-    curriculum = get_curriculum(student_id)
+# 核實是否衝堂
+def verify(student_id, course_id):
+    filename = student_id + ".json"
+    curriculum = read_json_file(filename)
+    course_info = read_json_file("Course.json")
+
+    if curriculum is None:
+        return False
+
+    if course_id in course_info:
+        course_time = course_info[course_id]["Time"]
+    else:
+        return False
+    time1 = []
+    for key, data in curriculum.items():
+        arr = search_course(data["Course_ID"])
+        if arr is None:
+            return False
+        time1.append(arr["Time"]["Week"])
+        time1.append(arr["Time"]["Class"])
+        time1.append(arr["Time"]["Duration"])
+
+    time2 = []
+    time2.append(course_time["Week"])
+    time2.append(course_time["Class"])
+    time2.append(course_time["Duration"])
+
+    if time1[0] == time2[0]:
+        if is_duplicate(time1, time2) == True:
+            return False
+        else:
+            return True
+    else:
+        return True
+
+# 是否重複
+def is_duplicate(time1, time2):
+    times = 0
+    arr1 = generate_value(time1)
+    arr2 = generate_value(time2)
     
+    for v1 in arr1:
+        if v1 in arr2:
+            times += 1
+    if times == 0:
+        return False
+    else:
+        return True
+
+# 生成計算值
+def generate_value(arr):
+    value = []
+    min_ = arr[1]
+    max_ = min_ + arr[2]
+    for i in range(min_, max_):
+        value.append(i)
+    return value
+
+# testing only
+course = read_json_file("Course.json")
+student_id = "F001"
+class_id = "B001"
+result = write_curriculum(student_id, class_id)
+if result:
+    print("Success")
+else:
+    print("Error")
