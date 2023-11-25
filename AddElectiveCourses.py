@@ -21,7 +21,7 @@ def read_course_info():
 
         return course_info
     except FileNotFoundError:
-        print("ERROR: 找不到Course.txt檔案。")
+        print("ERROR: 找不到 Course.txt 檔案。")
         return None
 
 # 讀入學生課表資料
