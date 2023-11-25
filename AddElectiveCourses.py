@@ -33,10 +33,21 @@ def write_curriculum(student_id, course_id):
     filename = student_id + ".json"
 
     try:
-        course_info = search_course(course_id)
-        if (verify(student_id, course_info['time'])):
-            with open(filename, "w") as f:
-                json.dump(course_info, f, indent = 2)
+        #course_info = search_course(course_id)
+        if (verify(student_id, course_id)):
+            with open(filename, 'r') as f:
+                data = json.load(f)
+
+            new_key = len(data) + 1
+            if new_key < 10:
+                new_key = "0" + str(new_key)
+            else:
+                new_key = str(new_key)
+
+            data[new_key] = {
+                "Course_ID" : course_id
+            }
+            write_json_file(filename, data)
             return True
     except FileNotFoundError:
         print("ERROR: " + student_id +"檔案不存在")
@@ -47,25 +58,28 @@ def verify(student_id, course_id):
     filename = student_id + ".json"
     curriculum = read_json_file(filename)
     course_info = read_json_file("Course.json")
-    course_time = course_info[course_id]["Time"]
+    if course_id in course_info:
+        course_time = course_info[course_id]["Time"]
 
     time1 = []
     for key, data in curriculum.items():
-        time1.append(data["Time"]["Week"])
-        time1.append(data["Time"]["Class"])
-        time1.append(data["Time"]["Duration"])
+        arr = search_course(data["Course_ID"])
+        time1.append(arr["Time"]["Week"])
+        time1.append(arr["Time"]["Class"])
+        time1.append(arr["Time"]["Duration"])
 
     time2 = []
-    for key, data in course_time.items():
-        time2.append(data["Week"])
-        time2.append(data["Class"])
-        time2.append(data["Duration"])
+    time2.append(course_time["Week"])
+    time2.append(course_time["Class"])
+    time2.append(course_time["Duration"])
 
     if time1[0] == time2[0]:
         if is_duplicate(time1, time2) == True:
             return False
         else:
             return True
+    else:
+        return True
 
 # 是否重複
 def is_duplicate(time1, time2):
@@ -89,3 +103,13 @@ def generate_value(arr):
     for i in range(min_, max_):
         value.append(i)
     return value
+
+# testing only
+course = read_json_file("Course.json")
+student_id = "F001"
+class_id = "A003"
+result = write_curriculum(student_id, class_id)
+if result:
+    print("Success")
+else:
+    print("Error")
