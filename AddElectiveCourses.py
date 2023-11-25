@@ -7,7 +7,6 @@ def read_json_file(filename):
     try:
         with open(filename, 'r') as f:
             data = json.load(f)
-        f.close()
         return data
     except FileNotFoundError:
         print("ERROR: 找不到 " + filename + " 檔案。")
@@ -27,13 +26,15 @@ def write_json_file(filename, new_data):
 
 def search_course(course_id):
     course_info = read_json_file("Course.json")
-    return course_info[course_id]
+    if course_id in course_info:
+        return course_info[course_id]
+    else:
+        return None
 
 def write_curriculum(student_id, course_id):
     filename = student_id + ".json"
 
     try:
-        #course_info = search_course(course_id)
         if (verify(student_id, course_id)):
             with open(filename, 'r') as f:
                 data = json.load(f)
@@ -58,12 +59,19 @@ def verify(student_id, course_id):
     filename = student_id + ".json"
     curriculum = read_json_file(filename)
     course_info = read_json_file("Course.json")
+
+    if curriculum is None:
+        return False
+
     if course_id in course_info:
         course_time = course_info[course_id]["Time"]
-
+    else:
+        return False
     time1 = []
     for key, data in curriculum.items():
         arr = search_course(data["Course_ID"])
+        if arr is None:
+            return False
         time1.append(arr["Time"]["Week"])
         time1.append(arr["Time"]["Class"])
         time1.append(arr["Time"]["Duration"])
@@ -107,7 +115,7 @@ def generate_value(arr):
 # testing only
 course = read_json_file("Course.json")
 student_id = "F001"
-class_id = "A003"
+class_id = "B001"
 result = write_curriculum(student_id, class_id)
 if result:
     print("Success")
